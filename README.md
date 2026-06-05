@@ -10,7 +10,7 @@ This firmware was vibe coded with **[Claude](https://claude.ai)** by Anthropic.
 
 ## How It Works
 
-Flock Safety cameras use WiFi-enabled ESP32 modules to communicate. Each manufacturer assigns a unique OUI (Organizationally Unique Identifier) as the first 3 bytes of every MAC address. This firmware puts the ESP32 into promiscuous mode and passively listens for WiFi packets whose source or destination MAC matches one of the 31 known Flock Safety OUI prefixes.
+Flock Safety cameras periodically emit WiFi probe requests and other management frames as part of their normal operation. Each network device's MAC address begins with a 3-byte OUI (Organizationally Unique Identifier) assigned to the hardware manufacturer. Researchers identified 31 OUI prefixes consistently associated with Flock Safety camera deployments through field testing. This firmware puts the ESP32 into promiscuous mode and passively listens for WiFi packets whose source or destination MAC matches one of those 31 known OUI prefixes.
 
 ### Detection Methods
 
