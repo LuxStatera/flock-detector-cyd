@@ -58,7 +58,7 @@ Triggered on new camera detection:
 - Red flashing border for 1 second, then solid display for 4 seconds
 - "FLOCK CAMERA DETECTED" banner
 - Full details: MAC address, signal strength (dBm), channel, frequency, detection method, hit count, status, OUI prefix
-- Audio alert tone (800-2000Hz sweep)
+- Audio alert tone (800–1900Hz sweep)
 - RGB LED turns red
 
 ### Camera List Screen
