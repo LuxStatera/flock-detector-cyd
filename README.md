@@ -82,25 +82,82 @@ Triggered on new camera detection:
 
 ## Building & Flashing
 
-### Prerequisites
-- [PlatformIO](https://platformio.org/) (CLI or IDE)
-- USB-C cable
-- ESP32-2432S028R board
+### What You Need
+- **ESP32-2432S028R** board (the 3.5" CYD variant with ILI9488 display) — available on AliExpress/Amazon for ~$10-15
+- **USB-C cable** (data cable, not charge-only)
+- A computer (Windows, macOS, or Linux)
 
-### Flash
+### Step 1: Install PlatformIO
+
+**Option A — VS Code (recommended for beginners):**
+1. Install [VS Code](https://code.visualstudio.com/)
+2. Open VS Code, go to Extensions (Ctrl+Shift+X / Cmd+Shift+X)
+3. Search for "PlatformIO IDE" and install it
+4. Restart VS Code when prompted
+
+**Option B — CLI only:**
 ```bash
-# Clone the repo
-git clone https://github.com/LuxStatera/flock-detector-cyd.git
-cd flock-detector-cyd
-
-# Build and upload (adjust upload_port in platformio.ini for your system)
-pio run -t upload
-
-# Monitor serial output
-pio device monitor -b 115200
+pip install platformio
 ```
 
-### Configuration
+### Step 2: Download This Project
+```bash
+git clone https://github.com/LuxStatera/flock-detector-cyd.git
+cd flock-detector-cyd
+```
+Or download the ZIP from GitHub and extract it.
+
+### Step 3: Find Your Serial Port
+
+Plug in the CYD via USB-C. Then find your port:
+
+- **macOS:** `ls /dev/cu.usb*` (usually `/dev/cu.usbserial-XXXX`)
+- **Windows:** Open Device Manager > Ports (COM & LPT) — look for CH340 (e.g. `COM3`)
+- **Linux:** `ls /dev/ttyUSB*` (usually `/dev/ttyUSB0`)
+
+> **Note:** If nothing shows up, you may need to install the [CH340 driver](https://sparks.gogo.co.nz/ch340.html) for your OS.
+
+### Step 4: Update the Port in Config
+
+Open `platformio.ini` and change the `upload_port` and `monitor_port` to match your port:
+```ini
+upload_port = /dev/cu.usbserial-110    ; <-- change this
+monitor_port = /dev/cu.usbserial-110   ; <-- change this
+```
+On Windows it would look like:
+```ini
+upload_port = COM3
+monitor_port = COM3
+```
+
+### Step 5: Flash the Firmware
+
+**VS Code:** Open the project folder in VS Code, then click the arrow (Upload) button in the PlatformIO toolbar at the bottom.
+
+**CLI:**
+```bash
+pio run -t upload
+```
+
+The first build takes a few minutes to download dependencies. Subsequent builds are faster. Once flashing completes, the device will reboot and start scanning automatically.
+
+### Step 6: Monitor Serial Output (Optional)
+```bash
+pio device monitor -b 115200
+```
+This shows detection events and debug info in your terminal.
+
+### Troubleshooting
+
+| Problem | Solution |
+|---------|----------|
+| "Unable to verify flash chip connection" | Try a different USB cable (must be data, not charge-only). Reduce `upload_speed` to `115200` in platformio.ini |
+| Port not found | Install the [CH340 driver](https://sparks.gogo.co.nz/ch340.html). Try a different USB port |
+| Display is white/blank | The TFT_eSPI `User_Setup.h` in `.pio/libdeps/` must be blank — if it has pin definitions, clear the file and rebuild |
+| Colors are inverted | The firmware already handles this with `tft.invertDisplay(true)`. If colors are wrong, your board may have a different panel variant |
+| Display is rotated | Change `tft.setRotation(2)` in `src/main.cpp` — try values 0-3 to find the correct orientation for your board |
+
+### Configuration Notes
 All display driver settings are defined in `platformio.ini` via build flags — the TFT_eSPI `User_Setup.h` is intentionally blank. If you need to change pins or display settings, edit the `build_flags` section in `platformio.ini`.
 
 ## Serial Output
