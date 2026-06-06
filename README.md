@@ -137,8 +137,8 @@ pip install platformio
 
 ### Step 2: Download This Project
 ```bash
-git clone https://github.com/LuxStatera/flock-detector-cyd.git
-cd flock-detector-cyd
+git clone https://github.com/LuxStatera/flock-hunter-cyd.git
+cd flock-hunter-cyd
 ```
 Or download the ZIP from GitHub and extract it.
 
