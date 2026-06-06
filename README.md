@@ -191,7 +191,3 @@ GPS and mapping are fully optional — the detector works without them, just lik
 ## Legal Disclaimer
 
 This device is a **passive receiver only**. It does not transmit, deauthenticate, jam, or interfere with any wireless communications. It operates the same way any WiFi-enabled device does when scanning for available networks. Monitoring publicly broadcast WiFi management frames is generally legal, but laws vary by jurisdiction. Check your local laws before use. This project is for educational and research purposes.
-
-## License
-
-This project follows the same open-source spirit as the original [Flock You](https://github.com/colonelpanichacks/flock-you) project.
