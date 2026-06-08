@@ -99,9 +99,9 @@ Triggered on new camera detection:
 
 | State | LED Color | Behavior |
 |-------|-----------|----------|
+| Boot | Blue | Solid |
 | Scanning | Green | Pulsing (sine wave breathing) |
 | Detection | Red | Solid during alert |
-| Boot | Green | Solid |
 
 ## 32 Flock Safety OUI Prefixes
 

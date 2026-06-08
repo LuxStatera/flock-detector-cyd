@@ -649,7 +649,7 @@ void setup() {
     Serial.println("\n[FLOCK HUNTER] Booting...");
 
     pinMode(LED_R, OUTPUT); pinMode(LED_G, OUTPUT); pinMode(LED_B, OUTPUT);
-    setLED(false, true, false);
+    setLED(false, false, true);
 
     pinMode(BACKLIGHT_PIN, OUTPUT);
     digitalWrite(BACKLIGHT_PIN, LOW);
@@ -757,7 +757,9 @@ void loop() {
         lastRep = nDet;
     }
 
-    if (st == ST_SCAN) {
+    if (st == ST_SCAN || st == ST_LIST) {
+        digitalWrite(LED_R, HIGH);  // off (active low)
+        digitalWrite(LED_B, HIGH);  // off
         int b = (sin(now / 500.0) + 1.0) * 127;
         analogWrite(LED_G, 255-b);
     }
