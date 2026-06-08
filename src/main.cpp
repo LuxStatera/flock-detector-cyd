@@ -390,7 +390,7 @@ void drawScan() {
 
         // Bottom info
         tft.setTextFont(2); tft.setTextColor(DDGRN, BG);
-        tft.drawString("PASSIVE  2.4GHz  802.11", 15, 205);
+        tft.drawString("PASSIVE  2.4GHz", 15, 205);
 
         // SD + PCAP status — bottom left
         tft.setTextFont(2);
