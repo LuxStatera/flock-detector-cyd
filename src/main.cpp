@@ -471,7 +471,7 @@ void drawScan() {
             tft.drawString(ab, 15, 225);
         } else {
             tft.setTextColor(DDGRN, BG);
-            tft.drawString("No cameras", 15, 225);
+            tft.drawString("No cameras in range", 15, 225);
         }
         tft.setTextColor(DDGRN, BG);
         tft.drawString("PASSIVE 2.4GHz", SW - 130, 225);
@@ -725,6 +725,7 @@ void loop() {
             break;
 
         case ST_ALERT:
+            analogWrite(LED_G, 255);    // stop PWM breathing (255 = off, active low)
             setLED(true, false, false);
             if (now - alertT < 5000) {
                 if (now - lastUI >= 200) { lastUI = now; drawAlert(alertIdx); }
