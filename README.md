@@ -40,10 +40,11 @@ The detector cycles through WiFi channels **1, 6, and 11** (the three non-overla
 - **SD Card:** Built-in micro SD slot (CS:5, CLK:18, MISO:19, MOSI:23)
 - **Speaker (optional):** Pin 26 — not connected by default, but the firmware supports audio alerts if you wire a small speaker or piezo buzzer to GPIO 26
 - **USB:** USB-C (CH340 serial + power) + Micro USB (power only)
+- **GPS (optional):** ATGM336H module via CN1 header (RX:22, TX:27, 3V3, GND)
 
-## SD Card + PCAP Capture
+## SD Card + PCAP + GPS Logging
 
-Insert a **FAT32-formatted micro SD card** (any size, 4-8GB recommended) and the detector automatically logs raw 802.11 packets from Flock cameras in standard pcap format.
+Insert a **FAT32-formatted micro SD card** (any size, 4-8GB recommended) and the detector automatically logs raw 802.11 packets and GPS-tagged detections.
 
 ### Folder Structure
 
@@ -51,11 +52,11 @@ Each boot creates a new session:
 ```
 /flock/
   session_001/
-    pcap/capture.pcap      <- raw 802.11 frames, open in Wireshark
-    csv/                   <- reserved for GPS logging (coming soon)
+    pcap/capture.pcap        <- raw 802.11 frames, open in Wireshark
+    csv/detections.csv       <- detection log with GPS coordinates
+    csv/detections.kml       <- open directly in Google Earth/Maps
   session_002/
-    pcap/capture.pcap
-    csv/
+    ...
 ```
 
 ### Using with Wireshark
@@ -65,7 +66,15 @@ Each boot creates a new session:
 3. Open the `.pcap` file in [Wireshark](https://www.wireshark.org/)
 4. You'll see full 802.11 management and data frames — frame types, MAC addresses, probe request SSIDs, data rates, and more
 
-The scan screen shows **SD:OK  PCAP:REC** when the card is working, or **SD:NONE** if no card is detected.
+### GPS Mapping with Google Earth
+
+1. Drive around with the GPS module connected and SD card inserted
+2. Pull the SD card and open `detections.kml` in [Google Earth](https://earth.google.com/)
+3. Each detected camera appears as a red pin with MAC address, signal strength, channel, and detection method
+
+The CSV file contains the same data in spreadsheet format for custom analysis.
+
+The scan screen shows **SD: OK  PCAP: REC** when the card is working, or **SD: NONE** if no card is detected.
 
 ## UI Screens
 
@@ -77,16 +86,16 @@ Displays "Flock Hunter" title, "Based on Flock You" credit line, version info, a
 - Animated "SCANNING..." text with cycling dots
 - Three channel indicator boxes (CH 1, CH 6, CH 11) highlighting the active channel
 - Live packet counter and camera counter
-- Network info (passive mode, 2.4GHz, 802.11)
 - Live "in range" counter showing how many cameras are currently active
+- Live GPS satellite count
 - SD card and PCAP recording status
 - Uptime display
 
 ### Alert Screen
 Triggered on new camera detection:
-- Red flashing border for 1 second, then solid display for 4 seconds
+- Red flashing for 1 second, then solid display for 4 seconds
 - "FLOCK CAMERA DETECTED" banner
-- Full details: MAC address, signal strength with range estimate (dBm + CLOSE/NEAR/FAR), channel, frequency, detection method, hit count, status, OUI prefix
+- Full details: MAC address, signal strength (dBm + CLOSE/NEAR/FAR), channel, frequency, detection method, OUI prefix, GPS coordinates, satellite count
 - RGB LED turns red
 - Audio alert tone (800-1900Hz sweep) if optional speaker is connected
 
@@ -119,7 +128,8 @@ Triggered on new camera detection:
 
 ### What You Need
 - **ESP32-2432S028R** board (2.8" CYD with ILI9488 display, USB-C variant) — available on AliExpress/Amazon for ~$10-15
-- **Micro SD card** (FAT32 formatted, any size) — for PCAP capture
+- **Micro SD card** (FAT32 formatted, any size) — for PCAP capture and GPS logging
+- **ATGM336H GPS module + antenna** (optional) — ~$3-5, connects to CN1 header
 - **USB-C cable** (data cable, not charge-only)
 - A computer (Windows, macOS, or Linux)
 
@@ -203,19 +213,25 @@ The device logs detection events over serial at 115200 baud:
 ```
 [FLOCK HUNTER] Booting...
 [DISPLAY] w=320 h=480 (ILI9488)
+[GPS] UART2 started on RX=22 TX=27
 [SD] Card ready — 7627MB
 [SD] Session: /flock/session_001
 [FLOCK HUNTER] Scanning channels 1, 6, 11
 [ALERT] 70:C9:4E:AB:CD:EF RSSI:-72 CH:6 OUI_TX
 ```
 
-## Coming Soon
+## GPS Module (Optional)
 
-### GPS Mapping (Optional)
+Connect an **ATGM336H GPS module** to the CN1 expansion header for location-tagged detections:
 
-Support for an **ATGM336H GPS module** connected via the CN1 expansion header (GPIO 22/27 + 3V3 + GND). This will log each detection with GPS coordinates to CSV files in the session's `csv/` folder, importable into Google Earth, Google Maps, or QGIS to map Flock camera locations.
+| GPS Pin | CYD CN1 Pin |
+|---------|-------------|
+| TX | GPIO 22 |
+| RX | GPIO 27 |
+| VCC | 3V3 |
+| GND | GND |
 
-GPS is fully optional — the detector works without it.
+The GPS locks on within seconds after first use. The scan screen shows live satellite count, and each detection is logged with coordinates to both CSV and KML files. GPS is fully optional — the detector works without it.
 
 ## Range Estimates
 
